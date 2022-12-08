@@ -1,3 +1,11 @@
+//!
+//! **A library to filter streams of data with Lua scripts.**
+//!
+//! This library is a wrapper around the Lua runtime to make it easier to use for filtering.
+//! It is designed to be used in a server environment where the filter scripts are loaded from
+//! a configuration file.
+//!
+
 use std::{collections::HashMap, path::PathBuf};
 
 use mlua::{prelude::LuaUserData, Lua, LuaSerdeExt};
@@ -11,12 +19,12 @@ pub struct Config {
 
 /// The name and script location of a filter.
 #[derive(Deserialize)]
-struct FilterConfig {
+pub struct FilterConfig {
     name: String,
     script: PathBuf,
 }
 
-/// A filter.
+/// A filter backed by a Lua function.
 pub struct Filter<'lua, T> {
     pub name: String,
     filter: mlua::Function<'lua>,
@@ -80,6 +88,7 @@ impl<'lua, T> FilterSystem<'lua, T>
 where
     T: LuaUserData + Serialize + Clone + Send + Sync + 'lua,
 {
+    /// Create a new filter system.
     pub fn new(runtime: &'lua Lua) -> Self {
         Self {
             runtime,
@@ -87,6 +96,7 @@ where
         }
     }
 
+    /// Load a filter configuration.
     pub fn load(&mut self, config: Config) -> Result<(), mlua::Error> {
         for (_chain, filters) in config.chains {
             for filter in filters {
@@ -104,6 +114,7 @@ where
         Ok(())
     }
 
+    /// Filter a single value.
     pub fn filter_one(&self, value: T) -> Result<bool, mlua::Error> {
         let mut filtered = false;
         for filter in &self.filters {
@@ -114,6 +125,7 @@ where
         Ok(filtered)
     }
 
+    /// Filter a list of values.
     pub fn filter(&self, values: Vec<T>) -> Result<Vec<T>, mlua::Error> {
         let mut result = Vec::new();
         for tx in values {
