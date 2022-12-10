@@ -180,7 +180,7 @@ mod tests {
         chains:
             uni-5:
                 - name: Testnet Manager
-                  script: filters/uni-5-manager.lua
+                  script: filters/test-filter.lua
         "#};
 
         let config: Config = serde_yaml::from_str(input).unwrap();
@@ -189,7 +189,7 @@ mod tests {
         assert_eq!(config.chains["uni-5"][0].name, "Testnet Manager");
         assert_eq!(
             config.chains["uni-5"][0].script.to_str().unwrap(),
-            "filters/uni-5-manager.lua"
+            "filters/test-filter.lua"
         );
     }
 
@@ -216,7 +216,7 @@ mod tests {
                     "uni-5".to_string(),
                     vec![FilterConfig {
                         name: "Testnet Manager".to_string(),
-                        script: PathBuf::from("filters/uni-5-manager.lua"),
+                        script: PathBuf::from("filters/test-filter.lua"),
                     }],
                 );
                 chains
