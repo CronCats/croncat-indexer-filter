@@ -106,8 +106,6 @@ where
                     let (name, filter) = pair?;
                     let filter = Filter::new(name, filter);
                     self.filters.push(filter);
-                    // q: How do I make self.filters.push work?
-                    // a: https://stackoverflow.com/a/30353928/1123955
                 }
             }
         }
